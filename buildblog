@@ -1,0 +1,31 @@
+#!/usr/bin/perl
+
+open my $fh, '<', './index.adoc' or die "Could not open file: $!";
+
+# Convert to HTML
+`asciidoctor \\
+  -D . \\
+  -o index.html \\
+  index.adoc
+`;
+
+# Iterate through subdirectories???
+my $pwd = `pwd`;
+$pwd =~ s/\R$//; # remove line endings
+my ( $path, $file_name ) = $pwd =~ m,/([^/]+)/([^/]+)$,m;
+
+# Convert to PDF
+qx{ asciidoctor-pdf \\
+  -D docs \\
+  -o "$path-$file_name.pdf" \\
+  ./index.adoc
+};
+
+# Convert to EPUB (requires installation)
+# qx{ asciidoctor-epub3 \\
+#   -D docs \\
+#   -o "$path-$file_name.epub" \\
+#   ./index.adoc
+# };
+
+__END__
